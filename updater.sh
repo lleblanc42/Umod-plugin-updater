@@ -34,17 +34,19 @@ do
   tempfile="${basnamefile}.temp"
 
   #Download plugin to temp file. Umod web server does not have timestamping turned on so Last-Modified header is not available
-  curl --fail --fail-early -o ${basepath}${tempfile} ${url}${basnamefile}
+  curl -s --fail --fail-early -o ${basepath}${tempfile} ${url}${basnamefile}
 
   # Check differences in downloaded plugin to plugin on disk
-  diff -s ${basepath}${tempfile} ${f} 1>> updater.log  2> /dev/null
+  DIFF=$(diff ${basepath}${tempfile} ${f})
 
-  if [[ $? == "1" ]]; then
+  if [ "$DIFF" ]; then
     ((updated++))
     printf "Change detected, updating plugin ${basnamefile}.\n" &>> updater.log
 
     # Copy temp file of updated plugin
-    if [mv "${basepath}${tempfile}" "${f}" &>> updater.log]; then
+    mv "${basepath}${tempfile}" "${f}"
+
+    if [ $? -ne 0 ]; then
       printf "\n$(date +%f_%T) - File copy failed, exiting. Check logs\n" |& tee -a updater.log
       exit 1
     fi
