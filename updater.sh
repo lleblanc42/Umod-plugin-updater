@@ -42,6 +42,10 @@ do
     exit 1
   fi
 
+  stat ${basepath}${tempfile}
+
+  cat ${basepath}${tempfile} | echo
+
   #Check differences in downloaded plugin to plugin on disk
   diff -s ${basepath}${tempfile} ${f} 1>> updater.log  2> /dev/null
 
@@ -55,6 +59,8 @@ do
       printf "$(date +%f_%T) - File copy failed, exiting. Check logs\n" |& tee -a updater.log
       exit 1
     fi
+  else
+    printf "No changes detected, no update required for ${basnamefile}.\n" &>> updater.log
   fi
 
   ((i++)) # increment progress
