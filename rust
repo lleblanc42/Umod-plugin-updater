@@ -2,7 +2,12 @@
 # Author: Rodney Yates (VRPC)
 
 # To Do: Add blacklist to skip updating plugins
+function startserver {
+  ./RustDedicated -batchmode +server.port {{SERVER_PORT}} +server.identity "rust" +rcon.port {{RCON_PORT}} +rcon.web true +server.hostname \"{{HOSTNAME}}\" +server.level \"{{LEVEL}}\" +server.description \"{{DESCRIPTION}}\" +server.url \"{{SERVER_URL}}\" +server.headerimage \"{{SERVER_IMG}}\" +server.worldsize \"{{WORLD_SIZE}}\" +server.seed \"{{WORLD_SEED}}\" +server.maxplayers {{MAX_PLAYERS}} +rcon.password \"{{RCON_PASS}}\" +server.saveinterval {{SAVEINTERVAL}} +app.port {{APP_PORT}} {{ADDITIONAL_ARGS}}
+}
 
+
+if [ -z "$UPDATE_PLUGINS" ] || [ "$UPDATE_PLUGINS" == "true" ]; then
 function ProgressBar {
   #credit: Teddy Skarin (fearside) https://github.com/fearside/ProgressBar/blob/master/progressbar.sh
   let _progress=(${1}*100/${2}*100)/100
@@ -16,7 +21,7 @@ function ProgressBar {
 }
 
 #UPDATE!!!!  Location to your umod (oxide) plugins.
-basepath="/home/mnsadmin/"
+basepath="/home/container/"
 logfile="${basepath}updater.log"
 FILES="${basepath}oxide/plugins/*.cs"
 n_items=$(ls 2>/dev/null -Ubad1 -- $FILES | wc -l)
@@ -67,3 +72,9 @@ do
 done
 
 printf "\n$(date +%f_%T) - Finished! Updated $updated plugins. Check updater.log for details.\n" |& tee -a ${logfile}
+printf "Starting Server..."
+startserver
+else
+printf "Starting Server..."
+startserver
+fi
