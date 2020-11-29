@@ -32,6 +32,9 @@ do
   basnamefile=$(basename "${f}")
   tempfile="${basnamefile}.temp"
 
+  printf "\nPreparing to download ${basnamefile} into ${tempfile}\n"
+  printf "\nFile: ${f}\n"
+
   #Download plugin to temp file. Umod web server does not have timestamping turned on so Last-Modified header is not available
   if [curl --fail --fail-early -o ${tempfile} ${url}${basnamefile} 1>> updater.log 2> /dev/null]; then
     printf "$(date +%f_%T) - File download failed with error $?, exiting. Check logs\n" |& tee -a updater.log
@@ -39,14 +42,15 @@ do
   fi
 
   #Check differences in downloaded plugin to plugin on disk
-  diff -s <(cat "${tempfile}") <(cat "${f}") 1>> updater.log  2> /dev/null
+  diff -s ${tempfile} ${f} 1>> updater.log  2> /dev/null
 
   if [[ $? == "1" ]]; then
     ((updated++))
-    printf "Change detected, updating plugin $(basename $f).\n" &>> updater.log
+    printf "Change detected, updating plugin ${basnamefile}.\n" &>> updater.log
     # Copy temp file of updated plugin
 
-    if [mv "${tempfile}" "${f}" &>> updater.log]; then
+    #if [mv "${tempfile}" "${f}" &>> updater.log]; then
+    if [yes | cp -f "${tempfile}" "${f}" &>> updater.log]; then
       printf "$(date +%f_%T) - File copy failed, exiting. Check logs\n" |& tee -a updater.log
       exit 1
     fi
