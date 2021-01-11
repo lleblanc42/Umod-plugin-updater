@@ -1,6 +1,7 @@
 #!/bin/bash
 # Author: Rodney Yates (VRPC)
-
+# Modified to actually function by Luke Leblanc
+# Modified to work in Pterodactyl by tmunsch
 
 if [ -z "$UPDATE_PLUGINS" ] || [ "$UPDATE_PLUGINS" == "true" ]; then
 function ProgressBar {
