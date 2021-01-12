@@ -1,8 +1,9 @@
 #!/bin/bash
 # Author: Rodney Yates (VRPC)
+# Modified to actually function by Luke Leblanc
+# Modified to work in Pterodactyl by tmunsch
 
-# To Do: Add blacklist to skip updating plugins
-
+if [ -z "$UPDATE_PLUGINS" ] || [ "$UPDATE_PLUGINS" == "true" ]; then
 function ProgressBar {
   #credit: Teddy Skarin (fearside) https://github.com/fearside/ProgressBar/blob/master/progressbar.sh
   let _progress=(${1}*100/${2}*100)/100
@@ -16,7 +17,7 @@ function ProgressBar {
 }
 
 #UPDATE!!!!  Location to your umod (oxide) plugins.
-basepath="/home/mnsadmin/"
+basepath="/home/container/"
 logfile="${basepath}updater.log"
 FILES="${basepath}oxide/plugins/*.cs"
 n_items=$(ls 2>/dev/null -Ubad1 -- $FILES | wc -l)
@@ -67,3 +68,7 @@ do
 done
 
 printf "\n$(date +%f_%T) - Finished! Updated $updated plugins. Check updater.log for details.\n" |& tee -a ${logfile}
+printf "Starting Server..."
+else
+printf "Starting Server..."
+fi
